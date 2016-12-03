@@ -34,6 +34,11 @@ class Zipstream {
 
 	private $centralDirectory = [];
 	private $byteOffset = 0;
+	
+	private static function int32_to_hex($value) { 
+		$value &= 0xffffffff; 
+		return str_pad(dechex($value), 8, "0", STR_PAD_LEFT); 
+	}
 
 	private static function leadingZeros($n, $zeros) {
 		return str_repeat('0', $zeros - strlen($n)) . $n;
@@ -65,7 +70,7 @@ class Zipstream {
 		echo hex2bin('504b0304' . $header_hex);
 
 		echo $output_filename;
-
+		
 		$i = 0;
 		$blocksize = 1024 * 1024 * 2;
 		$fid = fopen($real_filename, 'r');
@@ -74,6 +79,36 @@ class Zipstream {
 			$i += $blocksize;
 		}
 		fclose($fid);
+
+		$this->centralDirectory[] = ['header' => $header_hex,
+			'offset' => $this->byteOffset,
+			'fname' => $output_filename];
+		$this->byteOffset += $filesize + strlen($output_filename) + 4 /* magic */ + strlen($header_hex) / 2;
+	}
+	
+	function addStream($data, $output_filename) {
+		// The $output_filename is the name you want it to have in your zip file.
+		// Example: $zipstream->addStream(file_get_contents('filename.jpg'), $output_filename);
+
+		$filesize = strlen($data); // strlen instead of filesize!!
+		$size = self::swapEndianness(self::leadingZeros(dechex($filesize), 8));
+		$crc32 = self::swapEndianness(self::int32_to_hex(crc32($file)));
+		$header_hex = '0a00' // minimum version to extract: 1 (no idea what this encoding is, but other encoders do it this way and decoders recognize it)
+			. '0000' // general purpose flag (indicates encryption and compression options)
+			. '0000' // no compression (since they're already zip files)
+			. '00000000' // date and time in MS DOS format.
+			. $crc32
+			. $size // compressed size
+			. $size // uncompressed size
+			. self::swapEndianness(self::leadingZeros(dechex(strlen($output_filename)), 4)) // filename length
+			. '0000'; // extra field length
+
+		echo hex2bin('504b0304' . $header_hex);
+
+		echo $output_filename;
+		
+		// Output data
+		echo $data;
 
 		$this->centralDirectory[] = ['header' => $header_hex,
 			'offset' => $this->byteOffset,
