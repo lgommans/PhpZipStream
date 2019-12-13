@@ -9,26 +9,28 @@ class Zipstream {
 	 * require('zipstream.php');
 	 *
 	 * $size = Zipstream::filesize(1, strlen('statement.pdf'), filesize('statement-draft19.pdf'));
+	 * header('Content-Length: ' . $size); // Note that the content length is optional. It just helps the browser to show a progress bar and ETC.
 	 *
-	 * header('Content-Length: ' . $size);
 	 * header('Content-Type: application/zip');
 	 * header('Content-Disposition: attachment; filename="statement-in-a-zip.zip"');
 	 *
 	 * $z = new Zipstream();
-	 * // Output the file "statement-draft19.pdf", but call it "statement.pdf" in the zip.
-	 * $z->outputFile('statement-draft19.pdf', 'statement.pdf');
+	 * $z->addFile('statement-draft19.pdf', 'statement.pdf'); // Output the file "statement-draft19.pdf", but call it "statement.pdf" in the zip.
+	 * $z->addStream('Thank you for reading me.', 'readme.txt'); // Output a string as a file (filename: "readme.txt").
 	 * $z->finish(); // This is (the only thing) required for a valid zip file.
 	 *
 	 *
 	 * LICENSE
 	 * =======
 	 *
+	 * Copyright Luc Gommans, 2019
+	 *
 	 * This code is free software, licensed under the simplified BSD license:
 	 *
 	 *  Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
 	 *
 	 *   - Redistributions of source code must retain the above copyright notice and this list of conditions.
-	 *   - Redistributions in binary form must reproduce the above copyright notice in the documentation.
+	 *   - Redistributions in binary form must reproduce the above copyright notice and the project name (PhpZipStream) in the documentation.
 	 *
 	 */
 
