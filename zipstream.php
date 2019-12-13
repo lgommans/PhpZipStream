@@ -82,9 +82,11 @@ class Zipstream {
 		}
 		fclose($fid);
 
-		$this->centralDirectory[] = ['header' => $header_hex,
+		$this->centralDirectory[] = [
+			'header' => $header_hex,
 			'offset' => $this->byteOffset,
-			'fname' => $output_filename];
+			'fname' => $output_filename
+		];
 		$this->byteOffset += $filesize + strlen($output_filename) + 4 /* magic */ + strlen($header_hex) / 2;
 	}
 	
@@ -92,9 +94,9 @@ class Zipstream {
 		// The $output_filename is the name you want it to have in your zip file.
 		// Example: $zipstream->addStream(file_get_contents('filename.jpg'), $output_filename);
 
-		$filesize = strlen($data); // strlen instead of filesize!!
+		$filesize = strlen($data);
 		$size = self::swapEndianness(self::leadingZeros(dechex($filesize), 8));
-		$crc32 = self::swapEndianness(self::int32_to_hex(crc32($file)));
+		$crc32 = self::swapEndianness(hash('crc32b', $data));
 		$header_hex = '0a00' // minimum version to extract: 1 (no idea what this encoding is, but other encoders do it this way and decoders recognize it)
 			. '0000' // general purpose flag (indicates encryption and compression options)
 			. '0000' // no compression (since they're already zip files)
@@ -108,13 +110,13 @@ class Zipstream {
 		echo hex2bin('504b0304' . $header_hex);
 
 		echo $output_filename;
-		
-		// Output data
 		echo $data;
 
-		$this->centralDirectory[] = ['header' => $header_hex,
+		$this->centralDirectory[] = [
+			'header' => $header_hex,
 			'offset' => $this->byteOffset,
-			'fname' => $output_filename];
+			'fname' => $output_filename
+		];
 		$this->byteOffset += $filesize + strlen($output_filename) + 4 /* magic */ + strlen($header_hex) / 2;
 	}
 
@@ -190,6 +192,10 @@ class Zipstream {
 		// These tests could be improved a lot.
 		// Note that they must be run from a web server for ob_start to work.
 		// Returns true on success, string on failure
+
+		if (self::swapEndianness('04034b50') != '504b0304') {
+			return 'swapEndianness not working as expected.';
+		}
 
 		$fid = fopen("$tmpdir/phpzipstreamtest", 'w');
 		fwrite($fid, str_repeat('a', 314));
