@@ -4,9 +4,9 @@ PhpZipStream
 Output a zip file as a stream of data, without keeping the whole zip file in
 memory or writing it temporarily to disk.
 
-It is very small and simple but also very fast, lightweight and easy to use.
+It is very small and simple; but also very fast, lightweight, and easy to use.
 
-    require('zipstream.php');
+	require('zipstream.php');
 
 	$z = new Zipstream();
 
@@ -16,28 +16,37 @@ It is very small and simple but also very fast, lightweight and easy to use.
 
 	$z->finish();
 
+It doesn't do compression because most large files that we use (jpg, mp4, pdf,
+mp3, etc.) are already compressed and this makes it a very clean implementation.
 
-Compatibility
-=============
+Documentation is included at the top of [`zipstream.php`](zipstream.php). Since
+it's so simple to use, the short example and comments there show everything you
+need.
 
-Tricky to say, given the huge amount of legacy crap in the official zip file
-format documentation. The spec even says "oh we don't know, it's
-platform-specific so fill it in yourself" for some things.
 
-If everything went well, it should be compatible with *all* decoders, even
-including the original one for MS DOS (I think that's the oldest, from 1989).
+Decoder Compatibility
+=====================
 
-The minimal ZIP file format has been documented in a blog post. For the
-shortest ZIP file format reference you will ever read, see
+It's tricky to say which decoders will be compatible because there is a huge
+amount of legacy in the official zip file format documentation. The spec even
+defines some fields as "we don't know what this field does, it's
+platform-specific, just fill it in yourself".
+
+If everything went well, the output should be compatible with *all* decoders,
+even including the original one for MS DOS (I think that's the oldest, from
+1989).
+
+I documented the basic ZIP file format in a blog post. For the shortest ZIP
+file format reference you will ever read, see
 [lgms.nl/blog-8](https://lgms.nl/blog-8).
+
 
 Wishlist
 ========
 
-It seems to be bug-free (easy to say over such a small project), but there are
-things that can be improved:
+Things that could be improved:
 
-- Writing the correct date and time should probably be implemented.
-- Automated tests could use expansion.
-- And perhaps the filesize function should be made easier to use.
-
+- Don't require a second argument for `outputFile($local_filename, $output_filename)` but instead use the original (local) filename if the second is not given
+- Including the correct date and time in the zip file
+- Automated tests could use expansion
+- Maybe the filesize function should be made easier to use
