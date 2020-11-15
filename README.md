@@ -6,6 +6,8 @@ memory or writing it temporarily to disk.
 
 It is very small and simple; but also very fast, lightweight, and easy to use.
 
+Deploy only `zipstream.php`, zero dependencies.
+
 	require('zipstream.php');
 
 	$z = new Zipstream();
@@ -16,25 +18,23 @@ It is very small and simple; but also very fast, lightweight, and easy to use.
 
 	$z->finish();
 
-It doesn't do compression because most large files that we use (jpg, mp4, pdf,
-mp3, etc.) are already compressed and this makes it a very clean implementation.
+It doesn't do compression because large files (jpg, mp4, pdf, mp3, odt, etc.)
+are already compressed. This makes it a very clean implementation.
 
-Documentation is included at the top of [`zipstream.php`](zipstream.php). Since
-it's so simple to use, the short example and comments there show everything you
-need.
+Because it's so easy to use, a few examples have all the info,
+see [examples.php](examples.php).
 
 
 Decoder Compatibility
 =====================
 
-It's tricky to say which decoders will be compatible because there is a huge
-amount of legacy in the official zip file format documentation. The spec even
-defines some fields as "we don't know what this field does, it's
-platform-specific, just fill it in yourself".
+If everything went well, it should be compatible with *all* decoders, even
+including the original one for MS DOS (I think that's the oldest, from 1989).
 
-If everything went well, the output should be compatible with *all* decoders,
-even including the original one for MS DOS (I think that's the oldest, from
-1989).
+However, it's tricky to say because there is a large amount of legacy in the
+official zip file format documentation. The spec even defines some fields as
+"we don't know what this field does, it's platform-specific, just fill it in
+yourself".
 
 I documented the basic ZIP file format in a blog post. For the shortest ZIP
 file format reference you will ever read, see
@@ -44,9 +44,5 @@ file format reference you will ever read, see
 Wishlist
 ========
 
-Things that could be improved:
-
-- Don't require a second argument for `outputFile($local_filename, $output_filename)` but instead use the original (local) filename if the second is not given
-- Including the correct date and time in the zip file
-- Automated tests could use expansion
-- Maybe the filesize function should be made easier to use
+- Automated tests could use expansion (also parse it, e.g. with PHP's built-in parser)
+- Maybe the filesize calculation function could be made easier to use
